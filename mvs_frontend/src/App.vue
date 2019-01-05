@@ -1,44 +1,115 @@
 <template>
   <v-app>
     <v-toolbar
-      color='blue-grey darken-2'
+      color='#385a44'
       app>
       <v-toolbar-title class="headline text-uppercase">
-        <v-toolbar-side-icon></v-toolbar-side-icon>
-        <span class='white--text'>MVS</span>
-        <!-- <span class="font-weight-light">urveillance</span> -->
+        <v-toolbar-side-icon @click.stop='drawer = !drawer'></v-toolbar-side-icon>
+        <router-link to='/'>
+          <span class='white--text'>MVS</span>
+        </router-link>
       </v-toolbar-title>
       <v-spacer></v-spacer>
 
-      <router-link :to='{name: "video_processing"}'>
-        <v-btn
-          flat
-          color='white'
-        >
-          <span class="mr-2">Video Processing</span>
+      <v-tooltip bottom>
+        <v-btn slot='activator' v-if='this.$route.path === "/video"' @click='showUploadDialog()' icon small>
+          <v-icon class='white--text'>cloud_upload</v-icon>
         </v-btn>
-      </router-link>
+        <span>Upload Videos</span>
+      </v-tooltip>
+
     </v-toolbar>
 
+    <v-navigation-drawer v-model='drawer'
+      :mini-variant='mini'
+      clipped
+      absolute
+      dark
+      temporary
+    >
+    <v-list class='pa-1'>
+        <v-list-tile v-if='mini' @click.stop='mini = !mini'>
+          <v-list-tile-action>
+            <v-icon>chevron_right</v-icon>
+          </v-list-tile-action>
+        </v-list-tile>
+
+        <v-list-tile avatar tag='div'>
+          <v-list-tile-avatar>
+            <img src='./assets/profile.jpg'>
+          </v-list-tile-avatar>
+
+          <v-list-tile-content>
+            <v-list-tile-title>{{ loggedInUser.name }}</v-list-tile-title>
+          </v-list-tile-content>
+
+          <v-list-tile-action>
+            <v-btn icon @click.stop='mini = !mini'>
+              <v-icon>chevron_left</v-icon>
+            </v-btn>
+          </v-list-tile-action>
+        </v-list-tile>
+      </v-list>
+
+      <v-list class='pa-1'>
+        <template v-for='tile in menuOptions'>
+          <v-list-tile @click='navigate(tile.location)'>
+            <v-list-tile-action>
+              <v-icon>{{ tile.icon }}</v-icon>
+            </v-list-tile-action>
+            <v-list-tile-content>
+              <v-list-tile-title>{{ tile.title }}</v-list-tile-title>
+            </v-list-tile-content>
+          </v-list-tile>
+        </template>
+      </v-list>
+    </v-navigation-drawer>
     <router-view></router-view>
+
+    <upload-dialog></upload-dialog>
   </v-app>
 </template>
 
 <script>
 
-  import HelloWorld from './components/HelloWorld'
   import Homepage from './components/Homepage'
+  import UploadDialog from './components/UploadDialog'
 
   export default {
+
     name: 'App',
+
     components: {
-      Homepage
+      Homepage,
+      UploadDialog
     },
+
     data () {
       return {
-        //
+        drawer: false,
+        mini: false,
+        menuOptions: [
+          { title: 'Video Processing', icon: 'videocam', location: 'video_processing' }
+        ],
+        loggedInUser: {
+          name: 'Oliver Hill',
+          avatar: '@/assets/profile.jpg'
+        }
       }
+    },
+
+    methods: {
+
+      navigate(location) {
+        this.$router.push({ name: location })
+      },
+
+      showUploadDialog() {
+        this.$store.commit('changeUploadDialog')
+      }
+
     }
+
   }
 
 </script>
