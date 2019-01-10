@@ -67,6 +67,13 @@
     <router-view></router-view>
 
     <upload-dialog></upload-dialog>
+    <v-footer app inset color='#385a44' class='elevation-5'>
+      <v-layout row wrap>
+        <v-flex xs6 class='ml-2'>
+          <span class="white--text">&copy; 2019 Michigan Aerospace Corporation</span>
+        </v-flex>
+      </v-layout>
+    </v-footer>
   </v-app>
 </template>
 
@@ -89,7 +96,8 @@
         drawer: false,
         mini: false,
         menuOptions: [
-          { title: 'Video Processing', icon: 'videocam', location: 'video_processing' }
+          { title: 'Video Processing', icon: 'videocam', location: 'video_processing' },
+          { title: 'Contact', icon: 'mail_outline', location: 'contact' }
         ],
         loggedInUser: {
           name: 'Oliver Hill',

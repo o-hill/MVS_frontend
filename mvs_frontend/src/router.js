@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Homepage from './components/Homepage.vue'
 import VideoProcessing from './components/VideoProcessing.vue'
+import Contact from './components/Contact.vue'
 
 Vue.use(Router)
 
@@ -16,6 +17,11 @@ export default new Router({
       path: '/video',
       name: 'video_processing',
       component: VideoProcessing
+    },
+    {
+      path: '/contact',
+      name: 'contact',
+      component: Contact
     },
     {
       path: '/about',
