@@ -10,7 +10,8 @@ export default new Vuex.Store({
 
     videoList: [ ],
     videoServer: '',
-    showUploadDialog: false
+    showUploadDialog: false,
+    videoStatus: { }
 
   },
 
@@ -26,6 +27,10 @@ export default new Vuex.Store({
 
     changeUploadDialog(state) {
       state.showUploadDialog = !state.showUploadDialog
+    },
+
+    setVideoStatus(state, videoStatus) {
+      state.videoStatus = videoStatus
     }
 
   },
@@ -61,6 +66,12 @@ export default new Vuex.Store({
         context.commit('setVideoServer', resp.data)
       })
     },
+
+    processVideo(context, request) {
+      api.postResource('video_processing').then((resp) => {
+        context.commit('setVideoStatus', resp.data)
+      })
+    }
 
   }
 

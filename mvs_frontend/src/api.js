@@ -22,6 +22,7 @@ export default {
 
   listResource (resourceName) {
     var url = BASE_URL + '/' + resourceName
+    debugger;
     return axios.get(url)
   },
 
