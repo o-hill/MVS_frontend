@@ -66,7 +66,7 @@
     </v-navigation-drawer>
     <router-view></router-view>
 
-    <upload-dialog></upload-dialog>
+    <!-- <upload-dialog></upload-dialog> -->
     <v-footer app inset color='#385a44' class='elevation-5'>
       <v-layout row wrap>
         <v-flex xs6 class='ml-2'>
@@ -97,6 +97,7 @@
         mini: false,
         menuOptions: [
           { title: 'Video Processing', icon: 'videocam', location: 'video_processing' },
+          { title: 'Experiments', icon: 'date_range', location: 'schedule_experiment'},
           { title: 'Contact', icon: 'mail_outline', location: 'contact' }
         ],
         loggedInUser: {

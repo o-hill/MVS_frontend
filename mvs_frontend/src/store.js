@@ -10,7 +10,9 @@ export default new Vuex.Store({
 
     videoList: [ ],
     videoServer: '',
-    showUploadDialog: false
+    showUploadDialog: false,
+    experiment: [],
+    dishList: []
 
   },
 
@@ -26,6 +28,14 @@ export default new Vuex.Store({
 
     changeUploadDialog(state) {
       state.showUploadDialog = !state.showUploadDialog
+    },
+
+    setSchedule(state, schedule) {
+      state.schedule = schedule
+    },
+
+    setDishList(state, dishes) {
+      state.dishList = dishes
     }
 
   },
@@ -61,6 +71,19 @@ export default new Vuex.Store({
         context.commit('setVideoServer', resp.data)
       })
     },
+
+    scheduleExperiment(context, newExperiment) {
+      api.postResource('experiments', newExperiment).then((resp) => {
+        context.commit('setSchedule', resp.data)
+      })
+    },
+
+    getDishList (context) {
+      api.listResource('dishes').then((resp) => {
+        context.commit('setDishList', resp.data)
+      })
+    }
+
 
   }
 

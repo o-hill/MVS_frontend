@@ -70,7 +70,6 @@ export default {
     for (let file = 0; file < data.length; ++file) {
       formData.append('videos', data[file])
     }
-
     return axios.post(url, formData)
   }
 
