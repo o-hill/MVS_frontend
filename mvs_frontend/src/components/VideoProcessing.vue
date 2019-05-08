@@ -1,9 +1,6 @@
 <template>
 
   <v-container fluid id='video-container'>
-    <v-card class='video-card'>
-      <v-card-text>Hello!</v-card-text>
-    </v-card>
 
     <v-layout row wrap>
 
@@ -59,7 +56,7 @@
                         <template v-if='option.fields[0] === "DOUBLE"'>
                           <v-card-action>
                             <v-slider 
-                              v-model='doubleModels[index][i]'
+                              v-model='dataModels[index][i]'
                               step='0.1'
                               thumb-label
                             ></v-slider>
@@ -68,7 +65,7 @@
 
                         <template v-if='option.fields[0] === "LIST"'>
                           <v-card-action>
-                            <v-radio-group v-model='cellTypeRadio[index][i]'>
+                            <v-radio-group v-model='dataModels[index][i]'>
                               <v-radio
                                 v-for='(listItem, ii) in option.fields[1]'
                                 :key='ii'
@@ -81,7 +78,7 @@
 
                         <template v-if='option.fields[0] === "BOOLEAN"'>
                           <v-card-action>
-                            <v-checkbox v-model='boolModels[index][i]'></v-checkbox>
+                            <v-checkbox v-model='dataModels[index][i]'></v-checkbox>
                           </v-card-action>
                         </template>
 
@@ -93,6 +90,13 @@
               </v-card>
             </v-expansion-panel-content>
           </v-expansion-panel>
+          <v-card>
+            <v-layout justify-center>
+              <v-card-action>
+                <v-btn class='white--text' color='#385a44'>Process</v-btn>
+              </v-card-action>
+            </v-layout>
+          </v-card>
         </v-card>
       </v-flex>
 
@@ -116,11 +120,7 @@
         videosToUpload: [ ],
         activeVideo: 0,
         showProcessing: false,
-        processingModels: [ ],
-        processingTiles: [ ],
-        cellTypeRadio: { },
-        doubleModels: { },
-        boolModels: { }
+        dataModels: { }
       }
     },
 
@@ -149,8 +149,7 @@
     methods: {
 
       downloadVideo(filename) {
-        let video = this.$store.dispatch('downloadVideo', filename)
-        debugger;
+        this.$store.dispatch('downloadVideo', filename)
       },
 
       deleteVideoFromServer(filename) {
@@ -164,36 +163,51 @@
       selectVideo(index) {
         this.activeVideo = index
         this.showProcessing = true
-        //this.processingOptionsOne()
       },
 
       populateOptionsStructures() {
-        let process = this.$store.state.videoList[this.activeVideo]['processing_options']
+        const process = this.$store.state.videoList[this.activeVideo]['processing_options']
         console.log('Process ', process)
-        this.cellTypeRadio = { }
+        this.dataModels = { }
 
-        for (var i = 0; i < process.length; ++i) {
-          for (var j = 0; j < process[i].options.length; ++j) {
+        for (let i = 0; i < process.length; ++i) {
+          if (!(i in this.dataModels)) { this.dataModels[i] = { } }
 
-            // We need a number to model the radio group for each list.
+          // Model the various types of data for vuetify.
+          for (let j = 0; j < process[i].options.length; ++j) {
             if (process[i].options[j].fields[0] === 'LIST') {
-              if (!(i in this.cellTypeRadio)) { this.cellTypeRadio[i] = { } }
-              this.cellTypeRadio[i][j] = 1
+              this.dataModels[i][j] = 0
             }
-
-            if (process[i].options[j].fields[0] === 'DOUBLE') {
-              if (!(i in this.doubleModels)) { this.doubleModels[i] = { } }
-              this.doubleModels[i][j] = 0.0
+            else if (process[i].options[j].fields[0] === 'DOUBLE') {
+              this.dataModels[i][j] = 0.0
             }
-
-            if (process[i].options[j].fields[0] === 'BOOLEAN') {
-              if (!(i in this.boolModels)) { this.boolModels[i] = { } }
-              this.boolModels[i][j] = false
+            else if (process[i].options[j].fields[0] === 'BOOLEAN') {
+              this.dataModels[i][j] = false
             }
+            else {
+              console.log('Data type ', process[i].options[j].fields[0], ' has not been implemented yet.')
+            }
+          }
+        }
+      },
 
+      processVideo() {
+
+        const process = this.$store.state.videoList[this.activeVideo]['processing_options']
+        let request = { filename: this.$store.state.videoList[this.activeVideo].filename }
+
+        // Build the request with the data models.
+        for (let i = 0; i < process.length; ++i) {
+          const name = process[i].name
+          request[name] = { }
+
+          for (let j = 0; j < process[i].options.length; ++j) {
+            request[name][process[i].options[j].name] = this.dataModels[i][j]
           }
         }
 
+        // Send it off to the backend.
+        this.$store.dispatch('processVideo', request)
       }
 
 

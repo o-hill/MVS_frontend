@@ -12,7 +12,8 @@ export default new Vuex.Store({
     videoServer: '',
     showUploadDialog: false,
     experiment: [],
-    dishList: []
+    dishList: [],
+    unavailableDates: {}
 
   },
 
@@ -36,6 +37,10 @@ export default new Vuex.Store({
 
     setDishList(state, dishes) {
       state.dishList = dishes
+    },
+
+    setUnavailableDates(state, unavailableDates) {
+      state.unavailableDates = unavailableDates
     }
 
   },
@@ -82,8 +87,13 @@ export default new Vuex.Store({
       api.listResource('dishes').then((resp) => {
         context.commit('setDishList', resp.data)
       })
-    }
+    },
 
+    getUnavailableDates (context) {
+      api.listResource('unavailable_dates').then((resp) => {
+        context.commit('setUnavailableDates', resp.data)
+      })
+    }
 
   }
 

@@ -75,6 +75,7 @@
       uploadVideos() {
         this.$store.dispatch('uploadVideos', this.videosToUpload)
         this.$store.commit('changeUploadDialog')
+
         this.videosToUpload = [ ]
       }
 
